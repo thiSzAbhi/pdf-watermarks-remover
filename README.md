@@ -1,0 +1,2 @@
+
+# pdf-watermarks-remover
