@@ -1,24 +1,27 @@
-import pdfplumber
 from PyPDF2 import PdfWriter, PdfReader
 
 def remove_watermark_in_batches(input_pdf, output_pdf, batch_size=100):
-    with pdfplumber.open(input_pdf) as pdf:
-        writer = PdfWriter()
-        total_pages = len(pdf.pages)
+    reader = PdfReader(input_pdf)
+    writer = PdfWriter()
+    
+    num_pages = len(reader.pages)
+    
+    for i in range(0, num_pages, batch_size):
+        end_page = min(i + batch_size, num_pages)
+        print(f"Processing pages {i + 1} to {end_page}...")
         
-        # Process PDF in batches
-        for start in range(0, total_pages, batch_size):
-            end = min(start + batch_size, total_pages)
-            print(f"Processing pages {start + 1} to {end}...")
-            for page_num in range(start, end):
-                page = pdf.pages[page_num]
-                # Append page without watermark (assuming watermark removal logic)
-                writer.add_page(page.to_pdf())  # Use your logic to modify the page
+        for j in range(i, end_page):
+            page = reader.pages[j]
+            # Remove watermark logic here
+            # Add modified page to writer
+            writer.add_page(page)
+    
+    # Write the processed output to a new PDF file
+    with open(output_pdf, "wb") as f_out:
+        writer.write(f_out)
 
-        # Write the processed pages to output PDF
-        with open(output_pdf, "wb") as f_out:
-            writer.write(f_out)
-
-input_pdf = "input_watermarked.pdf"
-output_pdf = "output_without_watermark.pdf"
-remove_watermark_in_batches(input_pdf, output_pdf)
+if __name__ == "__main__":
+    input_pdf = "input_watermarked.pdf"
+    output_pdf = "output_without_watermark.pdf"
+    
+    remove_watermark_in_batches(input_pdf, output_pdf)
