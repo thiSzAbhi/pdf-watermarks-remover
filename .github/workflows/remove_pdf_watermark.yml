@@ -1,0 +1,40 @@
+name: PDF Watermark Remover
+
+on:
+  workflow_dispatch:
+    inputs:
+      pdf_url:
+        description: 'The URL of the PDF file to remove the watermark from'
+        required: true
+
+jobs:
+  remove_watermark:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install PyPDF2
+
+    - name: Download PDF from URL
+      run: |
+        curl -L ${{ github.event.inputs.pdf_url }} -o input_watermarked.pdf
+
+    - name: Run watermark remover
+      run: |
+        python remove_watermark.py
+
+    - name: Upload output PDF as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: processed-pdf
+        path: output_without_watermark.pdf
