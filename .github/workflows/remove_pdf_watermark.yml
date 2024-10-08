@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       pdf_url:
-        description: 'The URL of the PDF file to remove the watermark from'
+        description: 'URL of the PDF to remove watermark'
         required: true
 
 jobs:
@@ -22,14 +22,14 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install PyPDF2
+        pip install --upgrade pip
+        pip install pdfplumber fpdf
 
     - name: Download PDF from URL
       run: |
         curl -L ${{ github.event.inputs.pdf_url }} -o input_watermarked.pdf
 
-    - name: Run watermark remover
+    - name: Run watermark remover script
       run: |
         python remove_watermark.py
 
@@ -37,4 +37,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: processed-pdf
-        path: output_without_watermark.pdf
+        path: output_without_watermark_plumber.pdf
