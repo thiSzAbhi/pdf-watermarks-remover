@@ -23,11 +23,11 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip
-        pip install pdfplumber fpdf
+        pip install pdfplumber PyPDF2  # Ensures both libraries are installed
 
     - name: Download PDF from URL
       run: |
-        curl -L ${{ github.event.inputs.pdf_url }} -o input_watermarked.pdf
+        wget -O input_watermarked.pdf "${{ github.event.inputs.pdf_url }}"
 
     - name: Run watermark remover script
       run: |
@@ -37,4 +37,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: processed-pdf
-        path: output_without_watermark_plumber.pdf
+        path: output_without_watermark.pdf
